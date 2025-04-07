@@ -16,7 +16,8 @@ app.use(express.json())
 const port=process.env.PORT || 3000
 
 app.use(cors({
-    origin: 'https://inventora.netlify.app',
+    origin: true,
+    methods:"GET,POST,PUT,DELETE",
     credentials: true
   }));
 
