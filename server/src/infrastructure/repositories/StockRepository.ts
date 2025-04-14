@@ -18,7 +18,7 @@ export class StockRepository implements IStockRepository {
             description
         });
         if(itemExist){
-            itemExist.quantity = Number(itemExist.quantity) - Number(quantity);
+            itemExist.quantity = Number(itemExist.quantity) + Number(quantity);
             await itemExist.save();
         }
 
