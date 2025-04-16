@@ -11,6 +11,9 @@ export class StockUseCase {
         if (!itemId || !quantity || !description) {
             throw new Error("All fields are required");
         }
+        if(quantity < 0){
+            throw new Error('Fill with positive number')
+        }
         const type = 'incoming'
         return await this.stockRepository.addStock(
         itemId,
