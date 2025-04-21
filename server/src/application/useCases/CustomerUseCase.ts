@@ -9,7 +9,7 @@ export class CustomerUseCase{
     }
 
     async addCustomer(name:string,address:string,phone:number){
-        if(!name || !address || !phone ){
+        if(!name?.trim() || !address?.trim() || !phone?.toString().trim() ){
             throw new Error('All field Required')
         }
         const existingCustomer = await this.customerRepository.findByPhone(phone);
@@ -27,7 +27,7 @@ export class CustomerUseCase{
         if(!id || id == 'undefined'){
             throw new Error('Id Required')
         }
-        if(!name || !address || !phone ){
+        if(!name?.trim() || !address?.trim() || !phone?.toString().trim() ){
             throw new Error('All field Required')
         }
         const updatedCustomer = await this.customerRepository.updateCustomer(id, name, address, phone);

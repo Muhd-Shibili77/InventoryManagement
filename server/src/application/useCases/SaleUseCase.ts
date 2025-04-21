@@ -11,6 +11,9 @@ export class SaleUseCase {
         if (!item || !quantity || !price || !customer || !totalPrice) {
             throw new Error('All field Required')
         }
+        if(quantity < 1){
+            throw new Error('Quantity must be above zero')
+        }
         const existingItem = await this.saleRepository.finditemId(item);
         if (!existingItem) {
             throw new Error('Item with this id does not exist');
@@ -41,6 +44,9 @@ export class SaleUseCase {
         }
         if (!item || !quantity || !price || !customer || !totalPrice) {
             throw new Error('All field Required')
+        }
+        if(quantity < 1){
+            throw new Error('Quantity must be above zero')
         }
         const existingItem = await this.saleRepository.finditemId(item);
         if (!existingItem) {

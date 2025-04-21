@@ -46,12 +46,14 @@ export class CustomerController {
       const { id } = req.params;
 
       const { name, address, phone } = req.body;
+      
       const customer = await this.CustomerUseCase.updateCustomer(
         id,
         name,
         address,
         phone
       );
+      
       return res.status(StatusCode.OK).json({
         success: true,
         message: "customer updated successfully",

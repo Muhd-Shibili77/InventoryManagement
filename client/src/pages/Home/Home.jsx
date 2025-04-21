@@ -159,7 +159,6 @@ const [stockItem, setStockItem] = useState({
     if (
       !editItem.name ||
       !editItem.description ||
-      !editItem.quantity ||
       !editItem.price
     )
       return;

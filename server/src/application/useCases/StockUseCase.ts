@@ -8,11 +8,11 @@ export class StockUseCase {
         quantity: number,
         description: string
     ) {
-        if (!itemId || !quantity || !description) {
+        if (!itemId || !quantity || !description?.trim()) {
             throw new Error("All fields are required");
         }
         if(quantity < 0){
-            throw new Error('Fill with positive number')
+            throw new Error('stock must be positive')
         }
         const type = 'incoming'
         return await this.stockRepository.addStock(
