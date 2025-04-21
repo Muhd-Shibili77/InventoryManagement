@@ -12,14 +12,29 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { items, loading, error } = useSelector((state) => state.item);
+  const { items, totalPages } = useSelector((state) => state.item);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [search, setSearch] = useState("");
+  const [page,setPage] = useState(1)
+
+  
+   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500); 
+
+    return () => clearTimeout(timer); 
+  }, [search]);
+
+  const refreshList = () => dispatch(getItems({ search:debouncedSearch, page }));
 
   useEffect(() => {
-    dispatch(getItems());
-  }, [dispatch]);
+    refreshList();
+  }, [dispatch,page,debouncedSearch]);
 
 
-  const [search, setSearch] = useState("");
+ 
+  
   const [newItem, setNewItem] = useState({
     name: "",
     description: "",
@@ -39,20 +54,15 @@ const [stockItem, setStockItem] = useState({
   stock: "",
   description: "",
 })
-  const [currentPage, setCurrentPage] = useState(1);
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isStockModel, setIsStockModel] = useState(false);
   const [isEditModalOpen, setisEditModalOpen] = useState(false);
-  const ItemsPerPage = 6;
+  
 
-  const filteredItems = items.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase())
-  );
+  
 
-  const indexOfLast = currentPage * ItemsPerPage;
-  const indexOfFirst = indexOfLast - ItemsPerPage;
-  const currentItems = filteredItems.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(filteredItems.length / ItemsPerPage);
+  
 
   const handleAddStock = async () => {
     if(
@@ -68,10 +78,10 @@ const [stockItem, setStockItem] = useState({
         await dispatch(addStock({stockItem})).unwrap();
         setTimeout(() => {
           toast.success("Stock added");
-          dispatch(getItems());
+          refreshList();
           setStockItem({ itemId: "", stock: "", description: "" });
           setIsStockModel(false);
-        })
+        },1000)
         
       } catch (error) {
         console.error("Add Stock Error:", error);
@@ -94,7 +104,7 @@ const [stockItem, setStockItem] = useState({
 
       setTimeout(() => {
         toast.success("Item added");
-        dispatch(getItems());
+        refreshList();
         setNewItem({ name: "", description: "", quantity: 0, price: "" });
         setIsModalOpen(false);
       }, 1000);
@@ -168,7 +178,7 @@ const [stockItem, setStockItem] = useState({
 
       setTimeout(() => {
         toast.success("Item edited");
-        dispatch(getItems());
+        refreshList();
         setEditItem({ id:'',name: "", description: "", quantity: "", price: "" });
         setisEditModalOpen(false);
       }, 1000);
@@ -250,13 +260,13 @@ const [stockItem, setStockItem] = useState({
             Add New Items
           </button>
           <Table
-            data={currentItems}
+            data={items}
             columns={["Name", "Description", "Quantity", "Price", "Actions"]}
             renderRow={renderItemRow}
           />
           <Pagination
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
+            currentPage={page}
+            setCurrentPage={setPage}
             totalPages={totalPages}
           />
         </div>

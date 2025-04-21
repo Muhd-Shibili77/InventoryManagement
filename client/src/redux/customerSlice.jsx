@@ -15,12 +15,12 @@ export const addCustomers = createAsyncThunk(
   }
 );
 
-export const getCustomers = createAsyncThunk("getCustomers", async () => {
-  const response = await axiosInstance.get(`/customer/`, {
+export const getCustomers = createAsyncThunk("getCustomers", async ({ search = "", page = 1, limit = 6 }) => {
+  const response = await axiosInstance.get(`/customer/?search=${search}&page=${page}&limit=${limit}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 
-  return { customers: response.data.customers };
+  return { customers: response.data.customers,currentPage: response.data.currentPage,totalPages: response.data.totalPages, };
 });
 
 export const deleteCustomers = createAsyncThunk(
@@ -64,6 +64,8 @@ const customerSlice = createSlice({
       .addCase(getCustomers.fulfilled, (state, action) => {
         state.loading = false;
         state.customers = action.payload.customers;
+        state.currentPage = action.payload.currentPage;
+        state.totalPages = action.payload.totalPages;
       })
       .addCase(getCustomers.rejected, (state, action) => {
         state.loading = false;

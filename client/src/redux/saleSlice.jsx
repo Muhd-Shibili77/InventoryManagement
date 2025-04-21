@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../services/AxiosInstance.js";
 
-export const getSales = createAsyncThunk("getSales", async () => {
-  const response = await axiosInstance.get(`/sales/`, {
+export const getSales = createAsyncThunk("getSales", async ({  page = 1, limit = 6 }) => {
+  const response = await axiosInstance.get(`/sales/?page=${page}&limit=${limit}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 
-  return { sales: response.data.sales };
+  return { sales: response.data.sales,totalPages: response.data.totalPages, };
 });
 
 export const createSale = createAsyncThunk(
@@ -59,10 +59,13 @@ const saleSlice = createSlice({
     builder
       .addCase(getSales.pending, (state) => {
         state.loading = true;
+
       })
       .addCase(getSales.fulfilled, (state, action) => {
         state.loading = false;
         state.sales = action.payload.sales;
+        
+        state.totalPages = action.payload.totalPages;
       })
       .addCase(getSales.rejected, (state, action) => {
         state.loading = false;

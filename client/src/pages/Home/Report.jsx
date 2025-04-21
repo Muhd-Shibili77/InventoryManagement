@@ -22,26 +22,26 @@ const Report = () => {
   const [activeTab, setActiveTab] = useState("sales");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   
-  // Add state for email modal
+ 
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [emailRecipient, setEmailRecipient] = useState("");
   const [emailSubject, setEmailSubject] = useState("");
   
-  // Add state for date filtering
+  
   const [showDateFilter, setShowDateFilter] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [filteredSales, setFilteredSales] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   
-  // Set default items per page to 10
+
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   
   useEffect(() => {
-    dispatch(getSales());
-    dispatch(getItems());
-    dispatch(getCustomers());
+    dispatch(getSales({}));
+    dispatch(getItems({}));
+    dispatch(getCustomers({}));
   }, [dispatch]);
 
   useEffect(() => {
@@ -69,10 +69,20 @@ const Report = () => {
     }
   };
 
-  // Filter function for date range
+
   const applyDateFilter = () => {
+    const now = new Date();
     const start = startDate ? new Date(startDate) : null;
     const end = endDate ? new Date(endDate) : null;
+    
+    if ((start && start > now) || (end && end > now)) {
+      toast.error("Date cannot be in the future");
+      return;
+    }
+    if (start && end && start > end) {
+      toast.error("Start date cannot be after end date");
+      return;
+    }
     
     if (activeTab === "sales") {
       const filtered = sales.filter(sale => {

@@ -13,20 +13,21 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 
 const Sales = () => {
   const dispatch = useDispatch();
-  const { sales } = useSelector((state) => state.sale);
+  const { sales,totalPages } = useSelector((state) => state.sale);
   const { items } = useSelector((state) => state.item);
   const { customers } = useSelector((state) => state.customer);
-
-  useEffect(() => {
-    dispatch(getSales());
-    dispatch(getCustomers());
-    dispatch(getItems());
-  }, [dispatch]);
-
   const [currentPage, setCurrentPage] = useState(1);
+ 
+  useEffect(() => {
+    dispatch(getSales({ page: currentPage }));
+    dispatch(getCustomers({}));
+    dispatch(getItems({}));
+  }, [dispatch,currentPage]);
+
+ 
   const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setisEditModalOpen] = useState(false);
-  const ItemsPerPage = 6;
+  
 
   const [newSale, setNewSale] = useState({
     item: "",
@@ -46,10 +47,7 @@ const Sales = () => {
 
 
 
-  const indexOfLast = currentPage * ItemsPerPage;
-  const indexOfFirst = indexOfLast - ItemsPerPage;
-  const currentItems = sales.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(sales.length / ItemsPerPage);
+ 
 
 
 const handleDeleteSale = async (saleId) => {
@@ -199,7 +197,7 @@ const toggleEdit = (sale)=>{
             Add new Sale
           </button>
           <Table
-            data={currentItems}
+            data={sales}
             columns={["Item", "Customer",'Price', "Quantity", "Date", "Total Price","Actions"]}
             renderRow={renderItemRow}
           />

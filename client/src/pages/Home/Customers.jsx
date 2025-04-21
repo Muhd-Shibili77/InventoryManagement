@@ -13,15 +13,27 @@ import { ERROR_MESSAGE } from "../../constants/messages";
 
 const Customers = () => {
   const dispatch = useDispatch();
-  const { customers, loading, error } = useSelector((state) => state.customer);
-
+  const { customers, totalPages } = useSelector((state) => state.customer);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [search, setSearch] = useState("");
+  const [page,setPage] = useState(1)
   
   useEffect(() => {
-    dispatch(getCustomers());
-  }, [dispatch]);
+      const timer = setTimeout(() => {
+        setDebouncedSearch(search);
+      }, 500); 
+  
+      return () => clearTimeout(timer); 
+    }, [search]);
+
+    const refreshList = ()=>dispatch(getCustomers({ search:debouncedSearch, page }));
+
+  useEffect(() => {
+    refreshList()
+  }, [dispatch,debouncedSearch,page]);
 
 
-  const [search, setSearch] = useState("");
+ 
   const [newCustomer, setNewCustomer] = useState({
     name: "",
     address: "",
@@ -34,20 +46,13 @@ const Customers = () => {
     phone: "",
   });
 
-  const [currentPage, setCurrentPage] = useState(1);
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setisEditModalOpen] = useState(false);
   
-  const customersPerPage = 6;
+  
 
-  const filteredCustomers = customers.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const indexOfLast = currentPage * customersPerPage;
-  const indexOfFirst = indexOfLast - customersPerPage;
-  const currentCustomers = filteredCustomers.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(filteredCustomers.length / customersPerPage);
+  
 
   const handleAddCustomer = async () => {
     if (!newCustomer.name || !newCustomer.address || !newCustomer.phone) return;
@@ -57,7 +62,7 @@ const Customers = () => {
 
 
       setTimeout(()=>{
-        dispatch(getCustomers());
+        refreshList()
         toast.success("Customer added");
         setNewCustomer({ name: "", address: "", phone: "" });
         setIsModalOpen(false);
@@ -127,7 +132,7 @@ const Customers = () => {
       try {
         dispatch(updateCustomer({ id: editCustomer.id, editCustomer })).unwrap();
         setTimeout(()=>{
-          dispatch(getCustomers())
+          refreshList()
           toast.success("Customer Edited")
           setisEditModalOpen(false)
         },1000)
@@ -179,14 +184,14 @@ const Customers = () => {
             Add Customer
           </button>
           <Table
-            data={currentCustomers}
+            data={customers}
             columns={["Name", "Address", "Phone","Actions"]}
             renderRow={renderCustomerRow}
 
           />
           <Pagination
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
+            currentPage={page}
+            setCurrentPage={setPage}
             totalPages={totalPages}
           />
         </div>
