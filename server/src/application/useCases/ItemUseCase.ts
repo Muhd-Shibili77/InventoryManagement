@@ -3,8 +3,8 @@ import { IItemRepository } from "../interface/IItemRepository";
 export class ItemUseCase {
     constructor(private itemRepository: IItemRepository) {}
 
-    async getItem() {
-        const items = await this.itemRepository.getItem()
+    async getItem(query:object, page:number, limit:number) {
+        const items = await this.itemRepository.getItem(query, page, limit)
         return items
     }
     async addItem(name: string,description:string, price: number, quantity: number) {

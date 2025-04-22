@@ -7,11 +7,21 @@ export class CustomerController {
 
   async getCustomer(req: Request, res: Response) {
     try {
-      const customers = await this.CustomerUseCase.getCustomer();
+      const search: string = (req.query.search as string) || "";
+      const page: number = parseInt(req.query.page as string) || 1;
+      const limit: number = parseInt(req.query.limit as string) || 20;
+      const query = search ? { name: { $regex: search, $options: "i" } } : {};
+      const  { customers, totalPages } = await this.CustomerUseCase.getCustomer(
+        query,
+        page,
+        limit
+      );
       return res.status(StatusCode.OK).json({
         success: true,
         message: "customer list fetching successfull",
         customers,
+        currentPage: page,
+        totalPages: totalPages,
       });
     } catch (error: any) {
       return res.status(StatusCode.BAD_REQUEST).json({
@@ -46,14 +56,14 @@ export class CustomerController {
       const { id } = req.params;
 
       const { name, address, phone } = req.body;
-      
+
       const customer = await this.CustomerUseCase.updateCustomer(
         id,
         name,
         address,
         phone
       );
-      
+
       return res.status(StatusCode.OK).json({
         success: true,
         message: "customer updated successfully",
@@ -87,7 +97,7 @@ export class CustomerController {
   async ledgerCustomer(req: Request, res: Response) {
     try {
       const { id } = req.params;
-     
+
       const customer = await this.CustomerUseCase.ledgerCustomer(id);
       return res.status(StatusCode.OK).json({
         success: true,

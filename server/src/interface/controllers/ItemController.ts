@@ -5,11 +5,23 @@ export class ItemController {
   constructor(private itemUseCase: ItemUseCase) {}
   async getItem(req: Request, res: Response) {
     try {
-      const items = await this.itemUseCase.getItem();
+      const search: string = (req.query.search as string) || "";
+      const page: number = parseInt(req.query.page as string) || 1;
+      const limit: number = parseInt(req.query.limit as string) || 20;
+
+      const query = search ? { name: { $regex: search, $options: "i" } } : {};
+
+      const { items, totalPages } = await this.itemUseCase.getItem(
+        query,
+        page,
+        limit
+      );
       return res.status(StatusCode.OK).json({
         success: true,
         message: "Item list fetching successfull",
         items,
+        currentPage: page,
+        totalPages: totalPages,
       });
     } catch (error: any) {
       return res.status(StatusCode.BAD_REQUEST).json({

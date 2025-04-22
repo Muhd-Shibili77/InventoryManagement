@@ -25,9 +25,15 @@ export class CustomerRepository implements ICustomerRepository{
         })
     }
 
-    async getCustomer(): Promise<Customer[]> {
-        const customers = await CustomerModel.find()
-        return customers.map((customer)=> new Customer({id:customer.id,name:customer.name,address:customer.address,phone:customer.phone,isDelete:customer.isDelete}))
+    async getCustomer(query:object, page:number, limit:number): Promise<{customers:Customer[],totalPages:number}> {
+        const totalCount = await CustomerModel.countDocuments(query);
+        const totalPages = Math.ceil(totalCount / limit);
+        const customers = await CustomerModel.find(query).skip((page - 1) * limit).limit(limit).sort({createdAt:-1});
+       
+        return{
+            customers:customers.map((customer)=> new Customer({id:customer.id,name:customer.name,address:customer.address,phone:customer.phone,isDelete:customer.isDelete})),
+            totalPages:totalPages  
+        }
     }
 
     async updateCustomer(id: string, name: string, address: string, phone: number): Promise<Customer> {

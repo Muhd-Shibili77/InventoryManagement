@@ -3,8 +3,8 @@ import { ICustomerRepository } from "../interface/ICustomerRepository";
 export class CustomerUseCase{
     constructor(private customerRepository : ICustomerRepository){}
 
-    async getCustomer(){
-        const customers = await this.customerRepository.getCustomer()
+    async getCustomer(query:object, page:number, limit:number){
+        const customers = await this.customerRepository.getCustomer(query, page, limit)
         return customers
     }
 

@@ -24,4 +24,10 @@ export class AuthUseCase {
         refreshToken
     }
   }
+
+  async newAccessToken(refreshToken:string){
+    const decoded =  jwtService.verifyRefreshToken(refreshToken)
+    const newAccessToken = jwtService.generateToken(decoded.userId)
+    return newAccessToken
+  }
 }

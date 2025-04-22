@@ -3,8 +3,8 @@ import { MailService } from "../../infrastructure/services/emailService";
 export class SaleUseCase {
     constructor(private saleRepository: ISaleRespository) {}
 
-   async getSale() {
-        const sales = await this.saleRepository.getSale()
+   async getSale(page:number,limit:number) {
+        const sales = await this.saleRepository.getSale(page,limit)
         return sales
     }
     async addSale(item: string, quantity: number, price: number, customer: string, totalPrice: number) {

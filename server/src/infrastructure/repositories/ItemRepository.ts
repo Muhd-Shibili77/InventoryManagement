@@ -22,9 +22,18 @@ export class ItemRepository implements IItemRepository{
         })
     }
 
-    async getItem(): Promise<Item[]> {
-        const items = await ItemModel.find()
-        return items.map((item)=> new Item({id:item.id,name:item.name,description:item.description,price:item.price,quantity:item.quantity,isDelete:item.isDelete,saled:item.saled,updatedAt:item.updatedAt}))
+    async getItem(query:object, page:number, limit:number): Promise<{items:Item[],totalPages:number}> {
+        const totalCount = await ItemModel.countDocuments(query);
+        const totalPages = Math.ceil(totalCount / limit);
+
+        const items = await ItemModel.find(query).skip((page - 1) * limit).limit(limit).sort({createdAt:-1});
+        if(!items || items.length === 0){
+            return {items:[],totalPages:0}
+        }
+        return{
+          items:items.map((item)=> new Item({id:item.id,name:item.name,description:item.description,price:item.price,quantity:item.quantity,isDelete:item.isDelete,saled:item.saled,updatedAt:item.updatedAt})),
+          totalPages:totalPages  
+        } 
     }
 
     async updateItem(id: string, name: string,description:string, price: number, quantity: number): Promise<Item> {

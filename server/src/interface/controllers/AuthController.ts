@@ -22,4 +22,26 @@ export class AuthController {
       res.status(StatusCode.BAD_REQUEST).json({ success: false, message: error.message });
     }
   }
+  async refreshAccessToken(req: Request, res: Response): Promise<Response> {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+      if (!refreshToken) {
+        return res
+          .status(403)
+          .json({ success: false, message: "Refresh token missing" });
+      }
+
+      const newAccessToken = await this.AuthUseCase.newAccessToken(
+        refreshToken
+      );
+      return res.status(200).json({
+        success: true,
+        accessToken: newAccessToken,
+      });
+    } catch (error) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Invalid or expired refresh token" });
+    }
+  }
 }

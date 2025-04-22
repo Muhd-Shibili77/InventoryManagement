@@ -7,11 +7,15 @@ export class SaleController {
 
   async getSale(req: Request, res: Response) {
     try {
-        const sales = await this.saleUseCase.getSale();
+      const page: number = parseInt(req.query.page as string) || 1;
+      const limit: number = parseInt(req.query.limit as string) || 20;
+
+        const {sales,totalPages} = await this.saleUseCase.getSale(page,limit);
         return res.status(StatusCode.OK).json({
           success: true,
           message: "Sale list fetching successfull",
           sales,
+          totalPages: totalPages,
         });
     } catch (error: any) {
       return res.status(StatusCode.BAD_REQUEST).json({

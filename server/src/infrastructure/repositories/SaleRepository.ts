@@ -20,24 +20,29 @@ export class SaleRepository implements ISaleRespository {
     return `${prefix}-${year}${month}${day}-${random}`;
   }
 
-  async getSale(): Promise<Sale[]> {
-    const sales = await SaleModel.find()
+  async getSale(page:number,limit:number):Promise<{sales:Sale[],totalPages:number}>{
+    const totalCount = await SaleModel.countDocuments();
+    const totalPages = Math.ceil(totalCount / limit);
+    const sales = await SaleModel.find().skip((page - 1) * limit).limit(limit)
       .populate("itemId")
       .populate("customerId")
       .sort({ date: -1 });
-    return sales.map(
-      (sale) =>
-        new Sale({
-          id: sale.id,
-          invoiceNumber: sale.invoiceNumber,
-          itemId: sale.itemId,
-          quantity: sale.quantity,
-          price: sale.price,
-          totalPrice: sale.totalPrice,
-          date: sale.date,
-          customerId: sale.customerId,
-        })
-    );
+    return{
+      sales:sales.map(
+        (sale) =>
+          new Sale({
+            id: sale.id,
+            invoiceNumber: sale.invoiceNumber,
+            itemId: sale.itemId,
+            quantity: sale.quantity,
+            price: sale.price,
+            totalPrice: sale.totalPrice,
+            date: sale.date,
+            customerId: sale.customerId,
+          })
+    )
+      ,totalPages:totalPages
+    }
   }
 
   async addSale(

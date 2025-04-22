@@ -11,4 +11,7 @@ const router = Router()
 router.post('/login',async(req:Request,res:Response):Promise<void>=>{
     await authController.loginUser(req,res)
 })
+router.post('/refresh-token',async(req:Request,res:Response):Promise<void>=>{
+    await authController.refreshAccessToken(req,res)
+})
 export default router

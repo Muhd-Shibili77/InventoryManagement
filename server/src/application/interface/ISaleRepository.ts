@@ -4,7 +4,7 @@ import Customer from "../../domain/entity/Customer";
 
 export interface ISaleRespository {
     addSale(item:string,quantity:number,price:number,customer:string,totalPrice:number):Promise<Sale>
-    getSale():Promise<Sale[]>
+    getSale(page:number,limit:number):Promise<{sales:Sale[],totalPages:number}>
     editSale(id:string,item:string,quantity:number,price:number,customer:string,totalPrice:number):Promise<Sale>
     deleteSale(id:string):Promise<void>
     finditemId(itemId:string):Promise<Item | null>
