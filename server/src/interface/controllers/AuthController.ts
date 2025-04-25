@@ -10,6 +10,13 @@ export class AuthController {
         const { email, password } = req.body;
         const response = await this.AuthUseCase.login(email,password)
 
+        res.cookie('refreshToken', response.refreshToken, {
+          httpOnly: true,
+          secure: true,         // set to true in production (https)
+          sameSite: 'strict',   // or 'Lax'/'None' depending on your setup
+          maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+
         return res.status(StatusCode.OK).json({
             success: true,
             message: "Login successful",

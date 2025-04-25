@@ -4,7 +4,7 @@ dotenv.config();
 
 const JWT_SECRET:Secret = process.env.JWT_SECRET as string
 const JWT_REFRESH_SECRET:Secret = process.env.JWT_REFRESH_SECRET as string
-const JWT_EXPIRATION = '1h'
+const JWT_EXPIRATION = '15m'
 const JWT_REFRESH_EXPIRATION = "7d";
 
 export const generateToken =(userId:string):string=>{
