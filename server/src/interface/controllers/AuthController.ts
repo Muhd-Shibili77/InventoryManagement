@@ -12,10 +12,11 @@ export class AuthController {
 
         res.cookie('refreshToken', response.refreshToken, {
           httpOnly: true,
-          secure: true,         // set to true in production (https)
-          sameSite: 'strict',   // or 'Lax'/'None' depending on your setup
-          maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+          secure: true, // must be true for sameSite: 'none'
+          sameSite: 'none', // needed for cross-origin
+          maxAge: 7 * 24 * 60 * 60 * 1000
         });
+        
 
         return res.status(StatusCode.OK).json({
             success: true,

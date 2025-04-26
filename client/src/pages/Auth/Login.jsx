@@ -33,7 +33,7 @@ export default function LoginPage() {
       const response = await axiosInstance.post("/auth/login", {
         email,
         password,
-      });
+      },{ withCredentials: true });
 
       const Token = response.data.Token;
       
