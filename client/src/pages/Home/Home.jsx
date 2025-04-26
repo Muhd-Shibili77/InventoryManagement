@@ -65,12 +65,20 @@ const [stockItem, setStockItem] = useState({
   
 
   const handleAddStock = async () => {
-    if(
-      !stockItem.itemId ||
-      !stockItem.stock ||
-      !stockItem.description
-    )
+    if (!stockItem.itemId) {
+      toast.error("Item ID is required");
       return;
+    }
+    
+    if (!stockItem.stock) {
+      toast.error("Stock quantity is required");
+      return;
+    }
+    
+    if (!stockItem.description) {
+      toast.error("Description is required");
+      return;
+    }
 
       try {
     
@@ -91,13 +99,20 @@ const [stockItem, setStockItem] = useState({
       }
   }
   const handleAddItems = async () => {
-   
-    if (
-      !newItem.name ||
-      !newItem.description ||
-      !newItem.price
-    )
-      return;
+      if (!newItem.name) {
+        toast.error("name is required");
+        return;
+      }
+      
+      if (!newItem.description) {
+        toast.error("Description is required");
+        return;
+      }
+      
+      if (!newItem.price) {
+        toast.error("price is required");
+        return;
+      }
 
     try {
       await dispatch(addItems({ newItem })).unwrap();
@@ -172,6 +187,21 @@ const [stockItem, setStockItem] = useState({
       !editItem.price
     )
       return;
+
+      if (!editItem.name) {
+        toast.error("name is required");
+        return;
+      }
+      
+      if (!editItem.price) {
+        toast.error("price is required");
+        return;
+      }
+      
+      if (!editItem.description) {
+        toast.error("Description is required");
+        return;
+      }
 
     try {
       await dispatch(updateItem({id, editItem })).unwrap();

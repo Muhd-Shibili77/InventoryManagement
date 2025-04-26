@@ -55,7 +55,20 @@ const Customers = () => {
   
 
   const handleAddCustomer = async () => {
-    if (!newCustomer.name || !newCustomer.address || !newCustomer.phone) return;
+    if (!newCustomer.name) {
+      toast.error("Customer name is required");
+      return;
+    }
+    
+    if (!newCustomer.address) {
+      toast.error("Customer address is required");
+      return;
+    }
+    
+    if (!newCustomer.phone) {
+      toast.error("Customer phone number is required");
+      return;
+    }
 
     try {
       await dispatch(addCustomers({ newCustomer })).unwrap();
@@ -128,7 +141,20 @@ const Customers = () => {
     }
 
     const handleEditCustomer = ()=>{
-      if (!editCustomer.name || !editCustomer.address || !editCustomer.phone) return;
+      if (!editCustomer.name) {
+        toast.error("Customer name is required");
+        return;
+      }
+      
+      if (!editCustomer.address) {
+        toast.error("Customer address is required");
+        return;
+      }
+      
+      if (!editCustomer.phone) {
+        toast.error("Customer phone number is required");
+        return;
+      }
       try {
         dispatch(updateCustomer({ id: editCustomer.id, editCustomer })).unwrap();
         setTimeout(()=>{
